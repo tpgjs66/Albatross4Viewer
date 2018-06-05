@@ -1,0 +1,9 @@
+{
+    "path" : "~/ActivityPriority/Albatross4Viewer",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

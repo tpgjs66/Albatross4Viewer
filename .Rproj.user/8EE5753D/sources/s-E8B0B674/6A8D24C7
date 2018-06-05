@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1527864772634.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "6A8D24C7",
+    "lastKnownWriteTime" : 1528196392,
+    "last_content_update" : 1528196392459,
+    "path" : "~/ActivityPriority/Albatross4Viewer/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+        "cursorPosition" : "641,91",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
