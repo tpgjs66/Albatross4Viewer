@@ -22,6 +22,21 @@ server <- function(input, output, session){
     # assign('hh',hh,envir=.GlobalEnv)
     return(hh)
   })
+  
+  ## Load household coordinates data
+  myhhcoords <- reactive({
+    if (is.null(input$hhcoords)) {
+      hhcoords <- read.csv("data/hh-coords.txt")
+      return(hhcoords)
+    }
+    hhcoords <- read.csv(input$hhcoords$datapath,
+                   header = input$hhcoordsheader,
+                   sep = input$hhcoordssep,
+                   quote = input$hhcoordsquote)
+    # assign('hh',hh,envir=.GlobalEnv)
+    return(hhcoords)
+  })
+  
   ## Load schedule data
   mysched <- reactive({
     if (is.null(input$schedule)) {
@@ -63,6 +78,18 @@ server <- function(input, output, session){
     
     # assign('sched',sched,envir=.GlobalEnv)
     return(sched)
+  })
+  
+  ## Load schedule data
+  myschedcoords <- reactive({
+    if (is.null(input$scheduleCoords)) {
+      scheduleCoords <- read.csv("data/sched-coords.txt")
+      return(scheduleCoords)
+    }
+    scheduleCoords <- read.csv(input$scheduleCoords$datapath,
+                      header = input$scheduleCoordsheader,
+                      sep = input$scheduleCoordssep,
+                      quote = input$scheduleCoordsquote)
   })
   
   timeconverter <- function(sched) {
@@ -538,7 +565,7 @@ server <- function(input, output, session){
   filterschedmapactloc <- eventReactive(input$submitmapactloc,{
     # Load schedule file
     # sched <- mysched()
-    sched <- read.csv("data/sched-coords.txt")
+    sched <- myschedcoords()
     sched <- timeconverter(sched)
     # Filter schedule by input selection
     sched <- sched[sched$ActivityType %in% input$mapactlocact,]

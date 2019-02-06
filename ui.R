@@ -142,6 +142,46 @@ ui <- (dashboardPage(
                                      )
                                    )
                           ),
+                          tabPanel("Household coordinates",
+                                   sidebarLayout(
+                                     sidebarPanel( 
+                                       
+                                       # Input: Select a file ----
+                                       fileInput("hhcoords", "Choose household data (less than 500MB)",
+                                                 multiple = FALSE,
+                                                 accept = c("text/csv",
+                                                            "text/comma-separated-values,text/plain",
+                                                            ".csv")),
+                                       
+                                       # Input: Select separator ----
+                                       radioButtons("hhcoordssep", "Separator",
+                                                    choices = c(Comma = ",",
+                                                                Semicolon = ";",
+                                                                Tab = "\t"),
+                                                    selected = ","),
+                                       
+                                       # Input: Select quotes ----
+                                       radioButtons("hhcoordsquote", "Quote",
+                                                    choices = c(None = "",
+                                                                "Double Quote" = '"',
+                                                                "Single Quote" = "'"),
+                                                    selected = '"'),
+                                       
+                                       # Input: Checkbox if file has header ----
+                                       checkboxInput("hhcoordsheader", "Header", TRUE),
+                                       
+                                       # Input: Select number of rows to display ----
+                                       radioButtons("hhcoordsdisp", "Display",
+                                                    choices = c(Head = "head",
+                                                                All = "all"),
+                                                    selected = "head")
+                                       
+                                     ),
+                                     mainPanel(
+                                       
+                                     )
+                                   )
+                          ),
                           tabPanel("Schedule",
                                    sidebarLayout(
                                      sidebarPanel( 
@@ -181,6 +221,46 @@ ui <- (dashboardPage(
                                        tableOutput("previewSchedule"),
                                        h3(textOutput("previewScheduleTotal")),
                                        width = 12
+                                     )
+                                   )
+                          ),
+                          tabPanel("Schedule coordinates",
+                                   sidebarLayout(
+                                     sidebarPanel( 
+                                       
+                                       # Input: Select a file ----
+                                       fileInput("scheduleCoords", "Choose schedule data (less than 500MB)",
+                                                 multiple = FALSE,
+                                                 accept = c("text/csv",
+                                                            "text/comma-separated-values,text/plain",
+                                                            ".csv")),
+                                       
+                                       # Input: Select separator ----
+                                       radioButtons("scheduleCoordssep", "Separator",
+                                                    choices = c(Comma = ",",
+                                                                Semicolon = ";",
+                                                                Tab = "\t"),
+                                                    selected = ","),
+                                       
+                                       # Input: Select quotes ----
+                                       radioButtons("scheduleCoordsquote", "Quote",
+                                                    choices = c(None = "",
+                                                                "Double Quote" = '"',
+                                                                "Single Quote" = "'"),
+                                                    selected = '"'),
+                                       
+                                       # Input: Checkbox if file has header ----
+                                       checkboxInput("scheduleCoordsheader", "Header", TRUE),
+                                       
+                                       # Input: Select number of rows to display ----
+                                       radioButtons("scheduleCoordsdisp", "Display",
+                                                    choices = c(Head = "head",
+                                                                All = "all"),
+                                                    selected = "head")
+                                       
+                                     ),
+                                     mainPanel(
+                                       
                                      )
                                    )
                           ),
