@@ -701,8 +701,8 @@ server <- function(input, output, session){
       # Base groups
       addTiles(group = "OSM (default)",
                options = providerTileOptions(noWrap = TRUE)) %>%
-      addProviderTiles(group = "CartoDB Dark",
-                       provider = providers$CartoDB.DarkMatterNoLabels) %>%
+      addProviderTiles(group = "OSM B&W",
+                       provider = providers$OpenStreetMap.BlackAndWhite) %>%
       # addProviderTiles(group = "NatGeo", providers$Esri.NatGeoWorldMap) %>%
       # addProviderTiles(group = "Toner Lite", providers$Stamen.TonerLite) %>%
       
@@ -740,7 +740,7 @@ server <- function(input, output, session){
       
       # Layer control
       addLayersControl(
-        baseGroups = c("OSM (default)", "CartoDB Dark"),
+        baseGroups = c("OSM (default)", "OSM B&W"),
         overlayGroups = c("4-digit postcode area", "Activity location"),
         options = layersControlOptions(collapsed = FALSE)) %>%
       
@@ -891,14 +891,13 @@ server <- function(input, output, session){
     # breaks for legend
     histinfo<-hist(flows$flow[which(flows$flow != 1)],plot = FALSE)
     bins <- histinfo$breaks
-    pal <- colorBin("YlOrRd", domain = flows$flow, bins = bins)
+    pal <- colorBin("inferno", domain = flows$flow, bins = bins)
     
     leaflet() %>%
       setView(lng=5.00 , lat =52.00, zoom=8) %>%
       
       # Base groups
-      addProviderTiles(group = "CartoDB Dark (default)",
-                       provider = providers$CartoDB.DarkMatterNoLabels) %>%
+      
       addProviderTiles(group = "OSM BlackAndWhite",
                        provider = providers$OpenStreetMap.BlackAndWhite) %>%
       addTiles(group = "OSM",
@@ -911,7 +910,7 @@ server <- function(input, output, session){
                    label = labels,
                    layerId = ~id,
                    opacity = 0.3,
-                   highlightOptions = highlightOptions(color = "blue",
+                   highlightOptions = highlightOptions(color = "red",
                                                        weight = 3,
                                                        bringToFront = TRUE)) %>%
       
@@ -926,7 +925,7 @@ server <- function(input, output, session){
       
       # Layer control
       addLayersControl(
-        baseGroups = c("CartoDB Dark (default)","OSM BlackAndWhite","OSM"),
+        baseGroups = c("OSM BlackAndWhite","OSM"),
         overlayGroups = c("O-D flows"),
         options = layersControlOptions(collapsed = TRUE))
     
@@ -1135,9 +1134,10 @@ server <- function(input, output, session){
       setView(lng=5.00 , lat =52.00, zoom=8) %>%
       
       # Base groups
-      addTiles(group = "OSM (default)",options = providerTileOptions(noWrap = F)) %>%
-      addProviderTiles(group = "CartoDB Dark",
-                       provider = providers$CartoDB.DarkMatterNoLabels) %>%
+      addProviderTiles(group = "OSM B&W",
+                       provider = providers$OpenStreetMap.BlackAndWhite) %>%
+      addTiles(group = "OSM",options = providerTileOptions(noWrap = F)) %>%
+      
       
       # Overlay groups
       addPolygons(data = ppcs,
@@ -1178,7 +1178,7 @@ server <- function(input, output, session){
       
       # Layer control
       addLayersControl(
-        baseGroups = c("OSM (default)", "CartoDB Dark"),
+        baseGroups = c("OSM B&W", "OSM"),
         overlayGroups = c("Routes-Individual","4-digit postcode area"),
         options = layersControlOptions(collapsed = TRUE)) %>%
       
@@ -1305,9 +1305,10 @@ server <- function(input, output, session){
       setView(lng=5.00 , lat=52.00, zoom=8) %>%
       
       # Base groups
-      addTiles(group = "OSM (default)",options = providerTileOptions(noWrap = F)) %>%
-      addProviderTiles(group = "CartoDB Dark",
-                       provider = providers$CartoDB.DarkMatterNoLabels) %>%
+      addProviderTiles(group = "OSM B&W",
+                       provider = providers$OpenStreetMap.BlackAndWhite) %>%
+      addTiles(group = "OSM",options = providerTileOptions(noWrap = F)) %>%
+      
       
       # # Overlay groups
       # addPolygons(data = ppcs,
@@ -1340,7 +1341,7 @@ server <- function(input, output, session){
       
       # Layer control
       addLayersControl(
-        baseGroups = c("OSM (default)", "CartoDB Dark"),
+        baseGroups = c("OSM B&W", "OSM"),
         overlayGroups = c("Routes-Individual"),
         options = layersControlOptions(collapsed = TRUE))
       
@@ -1578,9 +1579,10 @@ server <- function(input, output, session){
       setView(lng=5.00 , lat =52.00, zoom=8) %>%
       
       # Base groups
-      addTiles(group = "OSM (default)",options = providerTileOptions(noWrap = F)) %>%
-      addProviderTiles(group = "CartoDB Dark",
-                       provider = providers$CartoDB.DarkMatterNoLabels) %>%
+      addProviderTiles(group = "OSM B&W",
+                       provider = providers$OpenStreetMap.BlackAndWhite) %>%
+      addTiles(group = "OSM",options = providerTileOptions(noWrap = F)) %>%
+      
       
       # Overlay groups
       addPolygons(data = ppcs,
@@ -1621,7 +1623,7 @@ server <- function(input, output, session){
       
       # Layer control
       addLayersControl(
-        baseGroups = c("OSM (default)", "CartoDB Dark"),
+        baseGroups = c("OSM B&W", "OSM"),
         overlayGroups = c("Routes-Aggregated", "4-digit postcode area"),
         options = layersControlOptions(collapsed = TRUE)) %>%
       

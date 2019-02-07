@@ -5,6 +5,8 @@ account: seheonkim
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 355074
-bundleId: 1412285
+bundleId: 1861432
 url: https://seheonkim.shinyapps.io/Albatross4/
-when: 1528196494.32175
+when: 1549531761.13105
+asMultiple: FALSE
+asStatic: FALSE

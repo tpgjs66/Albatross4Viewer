@@ -147,7 +147,7 @@ ui <- (dashboardPage(
                                      sidebarPanel( 
                                        
                                        # Input: Select a file ----
-                                       fileInput("hhcoords", "Choose household data (less than 500MB)",
+                                       fileInput("hhcoords", "Choose household coordinates data (less than 500MB)",
                                                  multiple = FALSE,
                                                  accept = c("text/csv",
                                                             "text/comma-separated-values,text/plain",
@@ -229,7 +229,7 @@ ui <- (dashboardPage(
                                      sidebarPanel( 
                                        
                                        # Input: Select a file ----
-                                       fileInput("scheduleCoords", "Choose schedule data (less than 500MB)",
+                                       fileInput("scheduleCoords", "Choose schedule coordinates data (less than 500MB)",
                                                  multiple = FALSE,
                                                  accept = c("text/csv",
                                                             "text/comma-separated-values,text/plain",
