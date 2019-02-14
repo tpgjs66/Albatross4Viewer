@@ -205,7 +205,7 @@ server <- function(input, output, session){
     schednum <- length(sched$EpisodeID)
     hhnum <- length(unique(sched$HHID))
     return(paste(hhnum, "households have been found with ",
-                 schednum ,"activitiy episodes."))
+                 schednum ,"activity episodes."))
   })
   
   output$scheduleTotal <- DT::renderDataTable({
@@ -293,7 +293,8 @@ server <- function(input, output, session){
   ###########               Leaflet household map             ##################
   ##############################################################################
   filteredhh <- eventReactive(input$submitmaphh,{
-    hh <- read.csv("data/hh-coords.txt")
+     hh <- myhhcoords()
+    # hh <- read.csv("data/hh-coords.txt")
   })
   
   output$maphh <- renderLeaflet({
@@ -307,7 +308,7 @@ server <- function(input, output, session){
     }
     
     # Load household data
-    hh <<- filteredhh()
+    hh <- filteredhh()
     
     # Load ppcs data
     ppcs <- myppcs()
