@@ -9,6 +9,7 @@ library(shiny)
 library(shinydashboard)
 library(leaflet)
 library(leaflet.extras)
+library(leaflet.minicharts)
 library(DT)
 library(sp)
 library(sf)
@@ -57,10 +58,10 @@ ui <- (dashboardPage(
       #   menuSubItem("Graph", tabName = "graph-summary", icon = icon("chart-area"))
       # ),
       # menuItem(
-      #   "Animate map", 
-      #   tabName = "animate", 
-      #   icon = icon("facetime-video",lib = "glyphicon")
-      # ),
+      #    "Animated map",
+      #    tabName = "animate",
+      #    icon = icon("facetime-video",lib = "glyphicon")
+      #  ),
       menuItem(
         "About", 
         tabName = "about", 
@@ -568,6 +569,17 @@ ui <- (dashboardPage(
                                      )
                                    )
                           ),
+                          # tabPanel("O-D flow(Animated)",
+                          #          fluidRow(
+                          #            column(width = 8,
+                          #                   box(width = 12,leafletOutput("mapodflowanim",width = "100%", height = 750))
+                          #          ),
+                          #          column(width = 4, actionButton("submitmapodflowanim", "Submit")
+                          #                         
+                          #                       )
+                          #          )
+                          #        
+                          # ),         
                           tabPanel("Route-Individual(PC4)",
                                    fluidRow(
                                      column(width = 8,
@@ -871,66 +883,66 @@ ui <- (dashboardPage(
       tabItem(tabName = "animate",
               tabsetPanel(type = "tabs",
                           tabPanel("Overview"
-                          ),
-                          tabPanel("Animate map",
-                                   fluidRow(
-                                     column(width = 8,
-                                            box(width = 12,leafletOutput("mapanim",width = "100%", height = 750))
-                                     ),
-                                     column(width = 4,
-                                            verticalLayout(
-                                              box(width = 12,title = "Data filter",status = "primary",
-                                                  solidHeader = TRUE,collapsible = TRUE,collapsed = FALSE,
-                                                  verticalLayout(
-                                                    fluidRow(
-                                                      column(width = 12,
-                                                             box(width = 6, title = "Activity type",status = "primary",
-                                                                 solidHeader = FALSE,collapsible = TRUE,collapsed = FALSE,
-                                                                 # Copy the line below to make a set of radio buttons
-                                                                 checkboxGroupInput("mapanimact",label = NULL,
-                                                                                    choices = list("Home" = "Home",
-                                                                                                   "Work" = "Work",
-                                                                                                   "Business" = "Business",
-                                                                                                   "Bring/Get" = "BringGet",
-                                                                                                   "Groceries" = "Groceries",
-                                                                                                   "Non-Daily Shopping" = "NonGroc",
-                                                                                                   "Services" = "Services",
-                                                                                                   "Social" = "Social",
-                                                                                                   "Leisure" = "Leisure",
-                                                                                                   "Touring" = "Touring",
-                                                                                                   "Other" = "Other"
-                                                                                    ),
-                                                                                    selected = c("Home","Work","Business","BringGet",
-                                                                                                 "Groceries","NonGroc","Services",
-                                                                                                 "Social","Leisure","Touring","Other"))),
-                                                             box(width = 6, title = "Transport mode",status = "primary",
-                                                                 solidHeader = FALSE,collapsible = TRUE,collapsed = FALSE,
-                                                                 # Copy the line below to make a set of radio buttons
-                                                                 checkboxGroupInput("mapanimmode",label = NULL,
-                                                                                    choices = list("Staying Home" = "Missing",
-                                                                                                   "Car" = "Car",
-                                                                                                   "Car as Passenger" = "Car as Passenger",
-                                                                                                   "Public Transport" = "Public Transport",
-                                                                                                   "Walking or Biking" = "Walking or Biking"
-                                                                                    ),
-                                                                                    selected = c("Missing","Car","Car as Passenger",
-                                                                                                 "Public Transport","Walking or Biking")))
-                                                      )
-                                                    )
-                                                  )
-                                              ),
-                                              box(width = 12,title = "Time line",status = "primary",
-                                                  solidHeader = TRUE,collapsible = TRUE,collapsed = FALSE,
-                                                  sliderInput("mapanimtime", label = NULL, min = 180, max = 1620,
-                                                              value = c(180,195),
-                                                              step=15,
-                                                              animate= animationOptions(interval = 200, loop = FALSE,
-                                                                                        playButton = NULL, pauseButton = NULL))
-                                              )
-                                            )
-                                     )
-                                   )
                           )
+                          # tabPanel("Animate map",
+                          #          fluidRow(
+                          #            column(width = 8,
+                          #                   box(width = 12,leafletOutput("mapanim",width = "100%", height = 750))
+                          #            ),
+                          #            column(width = 4,
+                          #                   verticalLayout(
+                          #                     box(width = 12,title = "Data filter",status = "primary",
+                          #                         solidHeader = TRUE,collapsible = TRUE,collapsed = FALSE,
+                          #                         verticalLayout(
+                          #                           fluidRow(
+                          #                             column(width = 12,
+                          #                                    box(width = 6, title = "Activity type",status = "primary",
+                          #                                        solidHeader = FALSE,collapsible = TRUE,collapsed = FALSE,
+                          #                                        # Copy the line below to make a set of radio buttons
+                          #                                        checkboxGroupInput("mapanimact",label = NULL,
+                          #                                                           choices = list("Home" = "Home",
+                          #                                                                          "Work" = "Work",
+                          #                                                                          "Business" = "Business",
+                          #                                                                          "Bring/Get" = "BringGet",
+                          #                                                                          "Groceries" = "Groceries",
+                          #                                                                          "Non-Daily Shopping" = "NonGroc",
+                          #                                                                          "Services" = "Services",
+                          #                                                                          "Social" = "Social",
+                          #                                                                          "Leisure" = "Leisure",
+                          #                                                                          "Touring" = "Touring",
+                          #                                                                          "Other" = "Other"
+                          #                                                           ),
+                          #                                                           selected = c("Home","Work","Business","BringGet",
+                          #                                                                        "Groceries","NonGroc","Services",
+                          #                                                                        "Social","Leisure","Touring","Other"))),
+                          #                                    box(width = 6, title = "Transport mode",status = "primary",
+                          #                                        solidHeader = FALSE,collapsible = TRUE,collapsed = FALSE,
+                          #                                        # Copy the line below to make a set of radio buttons
+                          #                                        checkboxGroupInput("mapanimmode",label = NULL,
+                          #                                                           choices = list("Staying Home" = "Missing",
+                          #                                                                          "Car" = "Car",
+                          #                                                                          "Car as Passenger" = "Car as Passenger",
+                          #                                                                          "Public Transport" = "Public Transport",
+                          #                                                                          "Walking or Biking" = "Walking or Biking"
+                          #                                                           ),
+                          #                                                           selected = c("Missing","Car","Car as Passenger",
+                          #                                                                        "Public Transport","Walking or Biking")))
+                          #                             )
+                          #                           )
+                          #                         )
+                          #                     ),
+                          #                     box(width = 12,title = "Time line",status = "primary",
+                          #                         solidHeader = TRUE,collapsible = TRUE,collapsed = FALSE,
+                          #                         sliderInput("mapanimtime", label = NULL, min = 180, max = 1620,
+                          #                                     value = c(180,195),
+                          #                                     step=15,
+                          #                                     animate= animationOptions(interval = 200, loop = FALSE,
+                          #                                                               playButton = NULL, pauseButton = NULL))
+                          #                     )
+                          #                   )
+                          #            )
+                          #          )
+                          # )
               )
       )
     )

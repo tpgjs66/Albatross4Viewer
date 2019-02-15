@@ -299,13 +299,13 @@ server <- function(input, output, session){
   
   output$maphh <- renderLeaflet({
     
-    # Create input file error message
-    if (is.null(input$household) | is.null(input$shpFilePc4)) {
-      showNotification("Please provide input files! (household / shp file)",
-                       type = "error",
-                       duration = 5)
-      # return()
-    }
+    # # Create input file error message
+    # if (is.null(input$household) | is.null(input$shpFilePc4)) {
+    #   showNotification("Please provide input files! (household / shp file)",
+    #                    type = "error",
+    #                    duration = 5)
+    #   # return()
+    # }
     
     # Load household data
     hh <- filteredhh()
@@ -537,7 +537,7 @@ server <- function(input, output, session){
     })
     
     output$clickedhhTable <- DT::renderDataTable({
-      
+      hh <- myhhcoords()
       table <- (subset(hh,HHID == click$id))
       table <- DT::datatable(data = (t(table)), colnames = "",
                              options = list(paging = F, searching = F, pagelength = 25))
@@ -579,13 +579,13 @@ server <- function(input, output, session){
   
   output$mapactloc <- renderLeaflet({
     
-    # Create input file error message
-    if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
-      showNotification("Please provide input files! (schedule / shp file)",
-                       type = "error",
-                       duration = 5)
-      # return()
-    }
+    # # Create input file error message
+    # if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
+    #   showNotification("Please provide input files! (schedule / shp file)",
+    #                    type = "error",
+    #                    duration = 5)
+    #   # return()
+    # }
     
     sched <<- filterschedmapactloc()
     
@@ -769,7 +769,7 @@ server <- function(input, output, session){
     })
     
     output$clickedactlocTable <- DT::renderDataTable({
-      
+      sched <- myschedcoords()
       table <- (subset(sched,SchedID == input$mapactloc_shape_click$id))
       table <- DT::datatable(data = (t(table)), colnames = "",
                              options = list(paging = F, searching = F, pagelength = 25))
@@ -796,7 +796,7 @@ server <- function(input, output, session){
   
   filterschedmapodflow <- eventReactive(input$submitmapodflow,{
     # Load schedule file
-    sched <- mysched()
+    sched <- myschedcoords()
     # Filter schedule by input selection
     sched <- sched[sched$ActivityType %in% input$mapodflowact,]
     sched <- sched[sched$Charging %in% input$mapodflowcharging,]
@@ -844,13 +844,13 @@ server <- function(input, output, session){
   
   output$mapodflow <- renderLeaflet({
     
-    # Create input file error message
-    if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
-      showNotification("Please provide input files! (schedule / shp file)",
-                       type = "error",
-                       duration = 5)
-      # return()
-    }
+    # # Create input file error message
+    # if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
+    #   showNotification("Please provide input files! (schedule / shp file)",
+    #                    type = "error",
+    #                    duration = 5)
+    #   # return()
+    # }
     
     # Load shape file
     ppcs <- myppcs()
@@ -890,10 +890,10 @@ server <- function(input, output, session){
     ) %>% lapply(htmltools::HTML)
     
     # breaks for legend
-    histinfo<-hist(flows$flow[which(flows$flow != 1)],plot = FALSE)
+    histinfo<-hist(lines@data$flow,plot = FALSE)
     bins <- histinfo$breaks
-    pal <- colorBin("inferno", domain = flows$flow, bins = bins)
-    
+    pal <- colorBin("blue", domain = lines@data$flow, bins = bins)
+   
     leaflet() %>%
       setView(lng=5.00 , lat =52.00, zoom=8) %>%
       
@@ -906,23 +906,23 @@ server <- function(input, output, session){
       # Overlay groups
       addPolylines(data=lines,
                    group = "O-D flows",
-                   weight = 0.5*(flows$flow),
-                   color = pal(flows$flow),
+                   weight = 1.2*(lines@data$flow),
+                   color = ~pal(lines@data$flow),
                    label = labels,
                    layerId = ~id,
-                   opacity = 0.3,
+                   opacity = 0.4,
                    highlightOptions = highlightOptions(color = "red",
-                                                       weight = 3,
+                                                       weight = 5,
                                                        bringToFront = TRUE)) %>%
       
-      # Add legend
-      addLegend(data = flows,
-                group = "O-D flows",
-                pal = pal,
-                values = flows$flow,
-                opacity = 0.7,
-                title = "Number of trips",
-                position = "bottomright") %>%
+      # # Add legend
+      # addLegend(data = lines,
+      #           group = "O-D flows",
+      #           pal = pal,
+      #           values = lines@data$flow,
+      #           opacity = 0.7,
+      #           title = "Number of trips",
+      #           position = "bottomright") %>%
       
       # Layer control
       addLayersControl(
@@ -937,6 +937,100 @@ server <- function(input, output, session){
     p <- input$mapodflow_shape_click
     print(p)
   })
+  
+  ##############################################################################
+  ###########             Leaflet O-D flow (Animated)         ##################
+  ##############################################################################
+  
+  # filterschedmapodflowanim <- eventReactive(input$submitmapodflowanim,{
+  #   # Load schedule file
+  #   sched <- myschedcoords()
+  #   # Filter schedule by input selection
+  #   sched <- sched[sched$ActivityType %in% input$mapodflowactanim,]
+  #   sched <- sched[sched$Charging %in% input$mapodflowcharginganim,]
+  #   sched <- sched[sched$Mode %in% input$mapodflowmodeanim,]
+  #   # sched <- sched[which((sched$BeginTime > input$mapodflowtime[1] & sched$BeginTime < input$mapodflowtime[2])|
+  #   #                        (sched$EndTime > input$mapodflowtime[1] & sched$EndTime < input$mapodflowtime[2])),]
+  #   sched
+  # })
+  # 
+  # filterodpairmapodflowanim <- eventReactive(input$submitmapodflowanim,{
+  #   
+  #   # Filter schedule by input selection
+  #   sched <- filterschedmapodflowanim()
+  #   
+  #   # Convert OD matrix to pairwise column
+  #   flows <- as.data.frame(table(sched$OrigLoc,sched$DestLoc))
+  #   flows <- flows[with(flows, order(-Freq)), ]
+  #   
+  #   # Print message for empty data
+  #   if (nrow(flows) == 0) {
+  #     showNotification("No O-D pair was found. Please choose items as per panels above.",
+  #                      type = "message",
+  #                      duration = 5)
+  #     return()
+  #   }
+  #   
+  #   colnames(flows) <- c("origin","destination","flow")
+  #   
+  #   # Remove OD pairs without flow to reduce computation time
+  #   flows <- flows[which(flows$flow > 0),]
+  #   
+  #   # Sample OD pairs with largest n.trips
+  #   if (input$mapodflowshow){
+  #     # Print message for wrong input number of O-D pairs
+  #     if (nrow(flows) < input$mapodflownum) {
+  #       showNotification("The number of O-D pairs you provide exceeds the total number of O-D pairs in data!",
+  #                        type = "error",
+  #                        duration = 5)
+  #       return()
+  #     }
+  #     flows <- flows[1:input$mapodflownum,]
+  #   }
+  #   flows
+  # })
+  # 
+  # output$mapodflowanim <- renderLeaflet({
+  #   
+  #   # Load shape file
+  #   ppcs <- myppcs()
+  #   
+  #   # Filter schedule by input selection
+  #   sched <- filterschedmapodflowanim()
+  #   
+  #   # Filter O-D pair by input selection
+  #   flows <- filterodpairmapodflowanim()
+  #   
+  #   # Print total number of O-D pairs
+  #   showNotification(paste(sum(flows$flow), "trips have been found among",nrow(flows),"O-D pairs."),
+  #                    type = "message",
+  #                    duration = 5)
+  #   
+  #   # Get PC4 coordinates and put them to OD flows
+  #   ppcsCoords<-cbind(ppcs$PC4,coordinates(ppcs))
+  #   ppcsCoords <- as.data.frame(ppcsCoords)
+  #   colnames(ppcsCoords) <- c("PC4","lng","lat")
+  #   flows <- merge(flows,ppcsCoords,by.x="destination",by.y="PC4",all.x=T)
+  #   flows <- merge(flows,ppcsCoords,by.x="origin",by.y="PC4",all.x=T)
+  #   
+  #   leaflet() %>%
+  #     setView(lng=5.00 , lat =52.00, zoom=8) %>%
+  #     
+  #     # Base groups
+  #     
+  #   addTiles() %>%
+  #   addFlows(
+  #     flows$lng.x, flows$lat.x, flows$lng.y, flows$lat.y,
+  #     flow = flows$flow,
+  #     #time = 1
+  #   )
+  #     
+  # })
+  # 
+  # observeEvent(input$mapodflow_shape_click,{
+  #   p <- input$mapodflow_shape_click
+  #   print(p)
+  # })
   
   ##############################################################################
   ###########              Leaflet Route-Individual PC4       ##################
@@ -1002,13 +1096,13 @@ server <- function(input, output, session){
   
   output$maprouteind <- renderLeaflet({
     
-    # Create input file error message
-    if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
-      showNotification("Please provide input files! (schedule/shp file)",
-                       type = "error",
-                       duration = 5)
-      # return()
-    }
+    # # Create input file error message
+    # if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
+    #   showNotification("Please provide input files! (schedule/shp file)",
+    #                    type = "error",
+    #                    duration = 5)
+    #   # return()
+    # }
     
     # Load schedule data
     sched <- mysched()
@@ -1255,13 +1349,13 @@ server <- function(input, output, session){
   
   output$maprouteindpc6 <- renderLeaflet({
     
-    # Create input file error message
-    if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
-      showNotification("Please provide input files!`` (schedule/shp file)",
-                       type = "error",
-                       duration = 5)
-      # return()
-    }
+    # # Create input file error message
+    # if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
+    #   showNotification("Please provide input files!`` (schedule/shp file)",
+    #                    type = "error",
+    #                    duration = 5)
+    #   # return()
+    # }
     
     # Filter schedule by input selection with more than 0 trip
     sched <- filterschedmaprouteindpc6()
@@ -1418,13 +1512,13 @@ server <- function(input, output, session){
     myflows <- as.data.frame(table(schedOnlyOut$OrigLoc,schedOnlyOut$DestLoc))
     myflows <- myflows[with(myflows, order(-Freq)), ]
     
-    # Print message for empty data
-    if (nrow(myflows) == 0) {
-      showNotification("No O-D pair was found. Please choose items as per panels above.",
-                       type = "message",
-                       duration = 5)
-      return()
-    }
+    # # Print message for empty data
+    # if (nrow(myflows) == 0) {
+    #   showNotification("No O-D pair was found. Please choose items as per panels above.",
+    #                    type = "message",
+    #                    duration = 5)
+    #   return()
+    # }
     
     colnames(myflows) <- c("origin","destination","flow")
     
@@ -1447,13 +1541,13 @@ server <- function(input, output, session){
   
   output$maprouteagg <- renderLeaflet({
     
-    # Create input file error message
-    if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
-      showNotification("Please provide input files! (schedule/shp file)",
-                       type = "error",
-                       duration = 5)
-      # return()
-    }
+    # # Create input file error message
+    # if (is.null(input$schedule) | is.null(input$shpFilePc4)) {
+    #   showNotification("Please provide input files! (schedule/shp file)",
+    #                    type = "error",
+    #                    duration = 5)
+    #   # return()
+    # }
     
     # Load schedule file
     sched <- mysched()
