@@ -858,6 +858,9 @@ server <- function(input, output, session){
     # Filter schedule by input selection
     sched <- filterschedmapodflow()
     
+    # Sample ppcs only where activities are occured.
+    ppcsSample <- subset(ppcs, ppcs@data$PC4 %in% sched$DestLoc)
+    
     # Filter O-D pair by input selection
     flows <- filterodpairmapodflow()
     
@@ -889,48 +892,75 @@ server <- function(input, output, session){
       lines@data$flow
     ) %>% lapply(htmltools::HTML)
     
+    ## Put labels on ppcs
+    labelsPpcs <- sprintf(
+      "<strong>PPC: %s</strong><br/>
+      ",
+      ppcsSample$PC4
+      
+    ) %>% lapply(htmltools::HTML)
+    
     # breaks for legend
     histinfo<-hist(lines@data$flow,plot = FALSE)
     bins <- histinfo$breaks
-    pal <- colorBin("blue", domain = lines@data$flow, bins = bins)
+    pal <- colorBin("YlOrRd", domain = lines@data$flow, bins = bins)
    
     leaflet() %>%
       setView(lng=5.00 , lat =52.00, zoom=8) %>%
       
       # Base groups
       
-      addProviderTiles(group = "OSM BlackAndWhite",
-                       provider = providers$OpenStreetMap.BlackAndWhite) %>%
+      addProviderTiles(group = "CartoDB DarkMatter",
+                       provider = providers$CartoDB.DarkMatter) %>%
       addTiles(group = "OSM",
                options = providerTileOptions(noWrap = F)) %>%
+      
+      addPolygons(data = ppcsSample,
+                  group = "4-digit postcode area",
+                  color = "#444444",
+                  weight = 1,
+                  smoothFactor = 0.5,
+                  opacity = 0.8,
+                  fill = TRUE,
+                  fillColor = "#A9F5BC",
+                  fillOpacity = 0.2,
+                  label = labelsPpcs,
+                  labelOptions = labelOptions(
+                    style = list("font-weight" = "normal", padding = "3px 8px"),
+                    textsize = "15px",
+                    direction = "auto"),
+                  highlightOptions = highlightOptions(color = "white",
+                                                      weight = 5,
+                                                      bringToFront = TRUE)) %>%
+      
       # Overlay groups
       addPolylines(data=lines,
                    group = "O-D flows",
-                   weight = 1.2*(lines@data$flow),
+                   weight = 0.5*(lines@data$flow),
                    color = ~pal(lines@data$flow),
                    label = labels,
                    layerId = ~id,
-                   opacity = 0.4,
+                   opacity = 0.5,
                    highlightOptions = highlightOptions(color = "red",
                                                        weight = 5,
                                                        bringToFront = TRUE)) %>%
       
-      # # Add legend
-      # addLegend(data = lines,
-      #           group = "O-D flows",
-      #           pal = pal,
-      #           values = lines@data$flow,
-      #           opacity = 0.7,
-      #           title = "Number of trips",
-      #           position = "bottomright") %>%
+      # Add legend
+      addLegend(data = lines,
+                group = "O-D flows",
+                pal = pal,
+                values = lines@data$flow,
+                opacity = 0.7,
+                title = "Number of trips",
+                position = "bottomright") %>%
       
       # Layer control
       addLayersControl(
-        baseGroups = c("OSM BlackAndWhite","OSM"),
-        overlayGroups = c("O-D flows"),
-        options = layersControlOptions(collapsed = TRUE))
+        baseGroups = c("CartoDB DarkMatter","OSM"),
+        overlayGroups = c("4-digit postcode area","O-D flows"),
+        options = layersControlOptions(collapsed = TRUE)) %>%
     
-    # hideGroup("O-D flows")
+     hideGroup("4-digit postcode area")
   })
   
   observeEvent(input$mapodflow_shape_click,{
