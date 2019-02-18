@@ -1922,7 +1922,7 @@ server <- function(input, output, session){
         type = "bar",
         chartdata = activityData,
         showLabels = FALSE,
-        width = 100, height = 100
+        width = 80, height = 80
       )
   })
   
