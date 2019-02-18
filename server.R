@@ -27,13 +27,14 @@ server <- function(input, output, session){
   myhhcoords <- reactive({
     if (is.null(input$hhcoords)) {
       hhcoords <- read.csv("data/hh-coords.txt")
-      return(hhcoords)
-    }
+      
+    } else {
     hhcoords <- read.csv(input$hhcoords$datapath,
                    header = input$hhcoordsheader,
                    sep = input$hhcoordssep,
                    quote = input$hhcoordsquote)
     # assign('hh',hh,envir=.GlobalEnv)
+    }
     return(hhcoords)
   })
   
@@ -1876,6 +1877,108 @@ server <- function(input, output, session){
       addProviderTiles(group = "CartoDB Dark",
                        provider = providers$CartoDB.DarkMatterNoLabels)
     
+  })
+  
+  ##############################################################################
+  ############################     Activity type    ############################
+  ##############################################################################
+  
+  output$mapact<- renderLeaflet({
+    
+    # Load schedule file
+    sched <- myschedcoords()
+    
+    sched <- timeconverter(sched)
+    
+    sched$ActDur <- sched$EndTime-sched$BeginTime
+    
+    # Load shape file
+    ppcs <- myppcs()
+    ppcsCoords <- gCentroid(ppcs,byid=T)
+    ppcsCoords$PC4 <- ppcs$PC4
+    ppcsCoords <- as.data.frame(ppcsCoords)
+    
+    # Data conversion
+    newdata2 <- sched %>%
+      group_by(DestLoc, ActivityType) %>%
+      summarise(ActDur = sum(ActDur))
+    newdata2 <- as.data.frame(newdata2)
+    
+    newdata2 <- reshape(newdata2, idvar = "DestLoc", timevar = "ActivityType", direction = "wide")
+    newdata2[is.na(newdata2)] <- 0
+    newdata2 <- merge(newdata2,ppcsCoords,by.x="DestLoc",by.y="PC4",all.x=F)
+    
+    activityData <- newdata2 %>% select(input$checkActivity)
+    
+    leaflet() %>%
+      setView(lng=5.4697 , lat =51.4416, zoom=13) %>%
+      
+      # Base groups
+      
+      addTiles(group = "OSM",options = providerTileOptions(noWrap = F)) %>%
+      
+      addMinicharts(
+        newdata2$x, newdata2$y,
+        type = "bar",
+        chartdata = activityData,
+        showLabels = FALSE,
+        width = 100, height = 100
+      )
+  })
+  
+  ##############################################################################
+  #######################     Electricity consumption    #######################
+  ##############################################################################
+  
+  output$mapcharging<- renderLeaflet({
+    
+    # Load schedule file
+    sched <- myschedcoords()
+    
+    sched <- timeconverter(sched)
+    
+    sched$ActDur <- sched$EndTime-sched$BeginTime
+    
+    # Load shape file
+    ppcs <- myppcs()
+    
+    ppcsCoords <- gCentroid(ppcs,byid=T)
+    ppcsCoords$PC4 <- ppcs$PC4
+    ppcsCoords <- as.data.frame(ppcsCoords)
+    
+    # Data conversion
+    newdata1 <- sched %>%
+      group_by(DestLoc, Charging) %>%
+      summarise(ActDur = sum(ActDur))
+    newdata1 <- as.data.frame(newdata1)
+    
+    newdata1 <- reshape(newdata1, idvar = "DestLoc", timevar = "Charging", direction = "wide")
+    newdata1[is.na(newdata1)] <- 0
+    newdata1 <- merge(newdata1,ppcsCoords,by.x="DestLoc",by.y="PC4",all.x=F)
+    
+    chargingData <- newdata1 %>% select(ActDur.PrivateCharging,ActDur.SemiPublicCharging,ActDur.PublicCharging,ActDur.FastCharging)
+    
+    # Conversion from time to Kilowatt-hour
+    chargingData <- chargingData/60
+    chargingData$ActDur.PrivateCharging <- chargingData$ActDur.PrivateCharging * input$privateCharging
+    chargingData$ActDur.PublicCharging <- chargingData$ActDur.PublicCharging * input$publicCharging
+    chargingData$ActDur.SemiPublicCharging <- chargingData$ActDur.SemiPublicCharging * input$semiPublicCharging
+    chargingData$ActDur.FastCharging <- chargingData$ActDur.FastCharging * input$fastCharging
+    
+    leaflet() %>%
+      setView(lng=5.4697 , lat =51.4416, zoom=13) %>%
+      
+      # Base groups
+      
+      addTiles(group = "OSM",options = providerTileOptions(noWrap = F)) %>%
+      
+      addMinicharts(
+        newdata1$x, newdata1$y,
+        type = "bar",
+        chartdata = chargingData,
+        showLabels = FALSE,
+        width = 50, height = 50
+      )
   })
   
   ##############################################################################

@@ -50,13 +50,13 @@ ui <- (dashboardPage(
         # menuSubItem("Graph", tabName = "graph-schedule", icon = icon("signal")),
         menuSubItem("List", tabName = "list-schedule", icon = icon("table",lib="font-awesome"))
       ),
-      # menuItem(
-      #   "Summary Statistics", 
-      #   tabName = "statistics", 
-      #   icon = icon("stats",lib = "glyphicon"),
-      #   menuSubItem("Map", tabName = "map-summary", icon = icon("globe")),
-      #   menuSubItem("Graph", tabName = "graph-summary", icon = icon("chart-area"))
-      # ),
+      menuItem(
+        "Summary Statistics",
+        tabName = "statistics",
+        icon = icon("stats",lib = "glyphicon"),
+        menuSubItem("Map", tabName = "map-summary", icon = icon("globe"))
+        
+      ),
       # menuItem(
       #    "Animated map",
       #    tabName = "animate",
@@ -866,15 +866,69 @@ ui <- (dashboardPage(
               )
       ),
       tabItem(tabName = "map-summary",
-              h2("Show map")
+              tabsetPanel(type = "tabs",
+               tabPanel("Overview"
+               ),
+               tabPanel("Activity duration (minutes)",
+                        fluidRow(
+                          column(width = 8,
+                                 box(width = 12,leafletOutput("mapact",width = "100%", height = 750))
+                          ),
+                          column(width = 4,
+                                 
+                                 verticalLayout(
+                                   
+                                   checkboxGroupInput("checkActivity",
+                                                      h3("Activity type"),
+                                                      choices = list("Home" = "ActDur.Home",
+                                                                     "Work" = "ActDur.Work",
+                                                                     "Business" = "ActDur.Business",
+                                                                     "Bring/Get" = "ActDur.BringGet",
+                                                                     "Groceries" = "ActDur.Groceries",
+                                                                     "Non-Daily Shopping" = "ActDur.NonGroc",
+                                                                     "Services" = "ActDur.Services",
+                                                                     "Social" = "ActDur.Social",
+                                                                     "Leisure" = "ActDur.Leisure",
+                                                                     "Touring" = "ActDur.Touring",
+                                                                     "Other" = "ActDur.Other"),
+                                                      selected = c("ActDur.Business","ActDur.BringGet", "ActDur.Groceries",
+                                                                   "ActDur.NonGroc", "ActDur.Services", "ActDur.Social",
+                                                                   "ActDur.Leisure", "ActDur.Touring", "ActDur.Other"))
+                                   
+                                   
+                                   # actionButton("submitmapact", "Submit")
+                                   # submitButton("Submit")
+                                 )
+                          )
+                        )
+               ),
+               tabPanel("Electricity consumption (kWh)",
+                       fluidRow(
+                         column(width = 8,
+                                box(width = 12,leafletOutput("mapcharging",width = "100%", height = 750))
+                         ),
+                         column(width = 4,
+                                
+                                      verticalLayout(
+                                        
+                                                numericInput("privateCharging", h5("Private charging rate (kWh)"), value = 3.3),
+                                                numericInput("publicCharging", h5("Public charging rate (kWh)"), value = 6.6),
+                                                numericInput("semiPublicCharging", h5("Semi-pubic charging rate (kWh)"), value = 6.6),
+                                                numericInput("fastCharging", h5("Fast charging rate (kWh)"), value = 50)
+                                        
+                                        # actionButton("submitmapcharging", "Submit")
+                                        # submitButton("Submit")
+                                      )
+                                )
+                         )
+                )
+               
+              )
       ),
       tabItem(tabName = "graph-household",
               h2("Show graph")
       ),
       tabItem(tabName = "graph-schedule",
-              h2("Show graph")
-      ),
-      tabItem(tabName = "graph-summary",
               h2("Show graph")
       ),
       tabItem(tabName = "about",
