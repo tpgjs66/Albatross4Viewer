@@ -186,7 +186,7 @@ server <- function(input, output, session){
     return(hh)
   })
   
-  ## Output schedule data
+   ## Output schedule data
   output$previewSchedule <- renderTable({
     req(input$schedule)
     if (input$scheduledisp == "head") {
@@ -222,6 +222,29 @@ server <- function(input, output, session){
     sched <- mysched()
     sched <- DT::datatable(sched, filter = "top",options = list(scrollX = TRUE))
     return(sched)
+  })
+ 
+  ## Output schedule coordinates data
+  output$previewScheduleCoords <- renderTable({
+    req(input$scheduleCoords)
+    if (input$scheduleCoordsdisp == "head") {
+      sched <- head(myschedcoords())
+    } else {
+      sched <- read.csv(input$scheduleCoords$datapath,
+                        header = input$scheduleCoordsheader,
+                        sep = input$scheduleCoordssep,
+                        quote = input$scheduleCoordsquote)
+    }
+    return(sched)
+  })
+  
+  output$previewScheduleTotalCoords <- renderText({
+    req(input$scheduleCoords)
+    sched <- myschedcoords()
+    schednum <- length(sched$EpisodeID)
+    hhnum <- length(unique(sched$HHID))
+    return(paste(hhnum, "households have been found with ",
+                 schednum ,"activity episodes."))
   })
   
   ##############################################################################

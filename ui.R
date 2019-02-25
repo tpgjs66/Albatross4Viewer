@@ -261,7 +261,9 @@ ui <- (dashboardPage(
                                        
                                      ),
                                      mainPanel(
-                                       
+                                       tableOutput("previewScheduleCoords"),
+                                       h3(textOutput("previewScheduleTotalCoords")),
+                                       width = 12
                                      )
                                    )
                           ),
